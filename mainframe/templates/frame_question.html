@@ -1,0 +1,8 @@
+{% extends 'main.html' %}
+{% block ask %}
+<form class="mt-5" action="" method="POST">
+    {% csrf_token %}
+    {{form.as_p}}
+    <input type="submit" class="btn btn-primary" name="submit">
+</form>
+{% endblock ask %}

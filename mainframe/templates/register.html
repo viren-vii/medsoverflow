@@ -1,0 +1,28 @@
+{% extends 'main.html' %}
+{% block register %}
+
+
+{% for key, value in form.errors.items %}
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    Oops! There is error in {{key}}. It looks like {{value}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+<div class="align-middle col-12 p-5 mt-5">
+    <div class="mx-auto display-block text-center">
+        <form action="" method="POST">
+            {% csrf_token %}
+            {% for f in form %}
+                <div class="form-group">
+                    <label for="{{ f.id }}">{{f.label}}</label>
+                    {{ f }}<b class="text-danger">   *</b>
+                    <br>
+                    <small id="emailHelp" class="form-text text-muted">{{f.help_text}}</small>
+                </div>
+                <br>
+            {% endfor %}
+            <input type="submit" class="btn btn-primary" name="register" value="Sign Up">
+        </form>
+    </div>
+</div>
+{% endblock register %}

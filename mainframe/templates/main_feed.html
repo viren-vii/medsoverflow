@@ -1,0 +1,26 @@
+{% extends 'main.html' %}
+
+{% block mainFeed %}
+<!-- middle main panel -->
+
+<!-- single card -->
+{% for q in questions %}
+    <div class="card my-2 border-bottom shadow-sm">
+        <div class="card-body row">
+            <p class="col-1 mx-1 border rounded text-center p-2 bg-light text-secondary">{{ q.votes }}<br><span class="small">votes</span></p>
+            <p class="col-1 mx-1 border rounded text-center p-2 bg-light text-secondary">{{ q.upvotes }}<br><span class="small">answers</span></p>
+            <a href="{% url 'mainframe:question' q.id %}" class="col-9 p-2">{{ q.title }}</a>
+            <div class="col-7">
+                {% for t in q.tags.all %}
+                <a href="{% url 'mainframe:tagFilter' t.id %}" class="tag my-1">{{ t }}</a>
+                {% endfor %}
+            </div>
+            <div class="col-5 text-end blockquote-footer">
+                <span class="text-secondary font-weight-light">{{ q.created_at }}</span>
+                <a href="{% url 'mainframe:profile' q.made_by.id %}">{{ q.made_by }}</a>
+                <b class="text-secondary">{{ q.made_by.rating }}</b>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+{% endblock mainFeed %}

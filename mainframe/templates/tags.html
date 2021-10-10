@@ -1,0 +1,8 @@
+{% extends 'main.html' %}
+
+{% block tags %}
+{% for t in tags %}
+    <a href="{% url 'mainframe:tagFilter' t.id %}"><span class="badge bg-primary">{{t.tagName}}</span></a>
+    <br>
+{% endfor %}
+{% endblock tags %}

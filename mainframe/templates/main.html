@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- metas -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Meds Overflow</title>
+        <meta name="description" content="Every medical help you'll ever need!">
+        <meta name="author" content="SitePoint">
+        <!-- links -->
+        <link rel="icon" href="{% static 'images/index.png' %}">
+        <link rel="stylesheet" href="{% static '/css/main.css' %}">
+
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sofia">
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-uWxY/CJNBR+1zjPWmfnSnVxwRheevXITnMqoEIeG1LJrdI0GlVs/9cVSyPYXdcSF" crossorigin="anonymous">
+
+    </head>
+    <body>
+        {% include 'navbar.html' with isLoggedIn=isLoggedIn myuser=myuser myFilter=myFilter %}
+
+        <div class="fluid-container mt-5 mb-5">
+            {% include 'left_panel.html' %}
+
+            <div class="col-7 px-0 middle-panel">
+                {% if 'profile' not in request.path and 'login' not in request.path and 'register' not in request.path%}
+                    {% include 'ask_question.html' %}
+                {% endif %}
+
+                {% block mainFeed %}
+                {% endblock mainFeed %}
+
+                {% block tags %}
+                {% endblock tags %}
+
+                {% block users %}
+                {% endblock users %}
+
+                {% block post %}
+                {% endblock post %}
+
+                {% block profile %}
+                {% endblock profile %}
+
+                {% block ask %}
+                {% endblock ask %}
+
+                {% block register %}
+                {% endblock register %}
+
+                {% block login %}
+                {% endblock login %}
+
+            </div>
+        </div>
+        <!-- {% include 'footer.html' %} -->
+    </body>
+    <!-- scripts -->
+    <script src="{% static '/js/main.js' %}"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-kQtW33rZJAHjgefvhyyzcGF3C5TFyBQBA13V1RKPf4uH+bwyzQxZ6CmMZHmNBEfJ" crossorigin="anonymous"></script>
+
+</html>

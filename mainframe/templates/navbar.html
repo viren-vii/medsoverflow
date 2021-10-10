@@ -1,0 +1,63 @@
+ <!-- navbar -->
+ <nav class="navbar navbar-expand-lg fixed-top navbar-light p-0 bg-light shadow-sm">
+    <div class="container-fluid p-0">
+        <div class="col-3">
+            <a class="navbar-brand block float-end py-2 px-2 me-0" href="{% url 'mainframe:home' %}">
+                <img src="https://www.w3schools.com/images/lamp.jpg" alt="" width="32" class="d-inline-block align-text-top">
+                meds <b>overflow</b>
+            </a>
+        </div>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        {% if 'register' not in request.get_full_path and 'login' not in request.get_full_path and 'profile' not in request.get_full_path%}
+        <div class="col-6">
+            <form class="d-flex justify-content-center m-auto" method="GET" id="searchBar">
+                {% for f in myFilter.form %}
+                {{ f }}
+                {%endfor%}
+                <!-- <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"> -->
+                <input class="btn btn-secondary" type="submit" value="Search">
+            </form>
+        </div>
+        {% endif %}
+        <div class="col-3">
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                {% if myuser %}
+                <ul class="navbar-nav mb-2 mb-lg-0">
+                    <li class="nav-item py-1">
+                        <a class="nav-link" aria-current="page" href="{% url 'mainframe:profile' myuser.id %}">
+                            <span class="material-icons align-middle">person</span>{{myuser}}
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown py-1">
+                        <a class="nav-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="material-icons">inbox</span>
+                        </a>
+                        <ul class="dropdown-menu" style="right: 0; left: auto;" aria-labelledby="navbarDropdown">
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    <div>
+                                        <h5>Title</h5>
+                                        <p>Description</p>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                {% endif %}
+                {% if myuser %}
+                    <div class="float-end me-0" style="margin-left: 250px;">
+                        <a href="{% url 'mainframe:logout' %}" class="btn btn-secondary">Log Out</a>
+                    </div>
+                {% elif not myuser %}
+                    <div class="float-end me-0" style="margin-left: 250px;">
+                        <a href="{% url 'mainframe:login' %}" class="btn btn-primary">Log In</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>

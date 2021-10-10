@@ -1,0 +1,101 @@
+{% extends 'main.html' %}
+{% block post %}
+ <!-- middle main panel -->
+<!-- question -->
+<div class="mt-5">
+    <h1>{{ question.title }}</h1>
+    <pre>Asked {{ question.created_at }}</pre>
+    <div class="row">
+        <div class="col-1 text-center">
+            <a href="#upvote"><i class="material-icons align-middle" style="font-size: 64px;">arrow_drop_up</i></a><br>
+            <b class="align-middle text-secondary">{{ question.votes }}</b>
+            <a href="#downvote"><i class="material-icons voted align-middle" style="font-size: 64px;">arrow_drop_down</i></a>
+            <a href="#bookmark"><i class="material-icons voted align-middle" style="font-size: 32px;">bookmark</i></a>
+        </div>
+        <div class="col-10">
+            <p>
+                {{ question.description }}
+            </p>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-7">
+            {% for t in question.tags.all %}
+            <a href="{% url 'mainframe:tagFilter' t.id %}" class="tag my-1">{{t.tagName}}</a>
+            {% endfor %}
+        </div>
+        <div class="col-5 text-end blockquote-footer">
+            <a href="{% url 'mainframe:profile' question.made_by.id %}">{{ question.made_by }}</a>
+            <b class="text-secondary">{{ question.made_by.rating }}</b>
+        </div>
+    </div>
+    <div class="row mt-5">
+        <div class="col-1"></div>
+        <div class="col-10">
+            {% for c in comments %}
+                <hr>
+                {{ c.description }}
+                <div class="text-end blockquote-footer">
+                    <span class="text-secondary font-weight-light">{{ c.created_at }}</span>
+                    <a href="{% url 'mainframe:profile' c.made_by.id %}">{{ c.made_by }}</a>
+                    <b>{{ c.made_by.rating }}</b>
+                </div>
+            {% endfor %}
+            <form action="" method="POST">
+                {% csrf_token %}
+                {% for f in commentForm %}
+                {{f}}
+                {% endfor %}
+                <input type="submit" class="btn btn-primary" name="Comment" value="Comment">
+            </form>
+        </div>
+    </div>
+</div>
+<hr>
+<!-- answers -->    
+<div class="mt-5">
+    <h4>Answers {{ answers.count }}</h4>
+    <br><br>
+    {% for answer in answers %}
+        <pre>Answered {{ answer.created_at }}</pre>
+        <div class="row">
+            <div class="col-1 text-center">
+                <a href="#upvote"><i class="material-icons align-middle" style="font-size: 64px;">arrow_drop_up</i></a><br>
+                <b class="align-middle text-secondary">{{ answer.votes }}</b>
+                <a href="#downvote"><i class="material-icons voted align-middle" style="font-size: 64px;">arrow_drop_down</i></a>
+            </div>
+            <div class="col-10">
+                <p>
+                    {{ answer.description }}
+                </p>
+            </div>
+            <div class="row">
+                <div class="col-7">
+                </div>
+                <div class="col-5 text-end blockquote-footer">
+                    <a href="{% url 'mainframe:profile' answer.made_by.id %}">{{ answer.made_by }}</a>
+                    <b class="text-secondary">{{ answer.made_by.name }}</b>
+                    <b>{{ answer.made_by.rating }}</b>
+                </div>
+            </div>
+
+        </div>
+        <hr>
+    {% endfor %}
+</div>
+<!-- add answer -->
+<h3 class="mt-5">Your Answer</h3>
+<div class="row mt-5">
+    <div class="col-1"></div>
+    <div class="col-10">
+        <form action="" method="POST">
+            {% csrf_token %}
+            {% for f in answerForm %}
+            {{f}}
+            {% endfor %}
+            <input type="submit" class="btn btn-primary" name="Answer">
+        </form>
+    </div>
+</div>
+{% endblock post %}

@@ -1,0 +1,99 @@
+{% extends 'main.html' %}
+
+{% block profile %}
+<!-- profile panel -->
+<div class="row mt-5">
+    <div class="col-2 p-5 shadow">
+        <img src="https://www.w3schools.com/images/lamp.jpg" width="100%">
+    </div>
+    <div class="ms-3 col-8">
+        <p class="fs-1 my-1">{{ user.username }}</p>
+        {% for r in user.roles.all %}
+        <p class="fs-5 my-1 text-secondary">{{ r }}</p>
+        {% endfor %}
+        <p class="fs-6 my-1 text-secondary"><i class="material-icons align-middle">date_range</i> Joined {{ user.joined_on }}</p>
+        <p class="fs-6 my-2 text-secondary"><i class="material-icons align-middle">location_on</i>{{ user.country }}</p>
+    </div>
+</div>
+<hr class="mt-5">
+<div class="mt-2">
+    <div class="row">
+        <div class="col-6">
+            <h3>Stats</h3>
+            <div class="mt-4">
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body">
+                    <div class="row mt-3">
+                        <div class="col-6 align-middle text-center text-secondary">
+                            <i class="material-icons align-middle">trending_up</i> {{ user.rating }}<br>reputation
+                        </div>
+                        <div class="col-6 align-middle text-center text-secondary">
+                            <i class="material-icons align-middle">post_add</i> {{ questions.count }}<br>questions
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-6 align-middle text-center text-secondary">
+                        <i class="material-icons align-middle">question_answer</i> {{ answers.count }}<br>answers
+                        </div>
+                        <div class="col-6 align-middle text-center text-secondary">
+                        <i class="material-icons align-middle">short_text</i> {{ comments }}<br>comments
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <h3>About</h3>
+            <div class="mt-4">
+                I am my story.
+            </div>
+        </div>
+    </div>
+</div>
+<hr class="mt-5">
+<h3>Your Questions {{ questions.count }}</h3>
+<div class="p-2">
+    <!-- single card -->
+    {% for q in questions %}
+    <div class="card my-2 border-bottom shadow-sm">
+        <div class="card-body row">
+            <p class="col-1 mx-1 border rounded text-center p-2 bg-light text-secondary">{{ q.votes }}<br><span class="small">votes</span></p>
+            <p class="col-1 mx-1 border rounded text-center p-2 bg-light text-secondary">{{ q.answerCount }}<br><span class="small">answers</span></p>
+            <a href="{% url 'mainframe:question' q.id %}" class="col-9 p-2">{{ q.title }}</a>
+            <div class="col-7">
+                {% for t in q.tags.all %}
+                <a href="{% url 'mainframe:tagFilter' t.id %}" class="tag my-1">{{t.tagName}}</a>
+                {% endfor %}
+            </div>
+            <div class="col-5 text-end blockquote-footer">
+                <span class="text-secondary font-weight-light">{{ q.created_at }}</span>
+                <a href="#"> {{ q.made_by }} </a>
+                <b class="text-secondary">{{ q.made_by.rating }}</b>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<hr class="mt-5">
+<h3>Your Answers {{ answers.count }}</h3>
+<div class="p-2">
+    <!-- single card -->
+    {% for a in answers %}
+        <div class="card my-2 border-bottom shadow-sm">
+            <div class="card-body row">
+                <p class="col-1 mx-1 border rounded text-center p-2 bg-light text-secondary">{{ a.votes }}<br><span class="small">votes</span></p>
+                <a href="{% url 'mainframe:question' a.question.id %}" class="col-9 p-2">Question: {{ a.question.title }}</a>
+                <p>Your Answer: {{ a.description }}</p>
+                <div class="col-7">
+                </div>
+                <div class="col-5 text-end blockquote-footer">
+                    <span class="text-secondary font-weight-light">{{ a.created_at }}</span>
+                    <a href="#"> {{ a.made_by }} </a>
+                    <b class="text-secondary">{{ a.made_by.rating }}</b>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
