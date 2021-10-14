@@ -7,9 +7,15 @@
     <pre>Asked {{ question.created_at }}</pre>
     <div class="row">
         <div class="col-1 text-center">
-            <a href="#upvote"><i class="material-icons align-middle" style="font-size: 64px;">arrow_drop_up</i></a><br>
+            <form action="" method="POST">
+                {% csrf_token %}
+                <button type="submit" name="upvoteQ" class="iconButton"><i class="material-icons align-middle" style="font-size: 64px;">arrow_drop_up</i></button><br>
+            </form>
             <b class="align-middle text-secondary">{{ question.votes }}</b>
-            <a href="#downvote"><i class="material-icons voted align-middle" style="font-size: 64px;">arrow_drop_down</i></a>
+            <form action="" method="POST">
+                {% csrf_token %}
+                <button type="submit" name="downvoteQ" class="iconButton"><i class="material-icons voted align-middle" style="font-size: 64px;">arrow_drop_down</i></button><br>
+            </form>
             <a href="#bookmark"><i class="material-icons voted align-middle" style="font-size: 32px;">bookmark</i></a>
         </div>
         <div class="col-10">

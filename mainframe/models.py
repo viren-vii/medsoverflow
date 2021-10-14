@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models.base import Model
 from django.db.models.deletion import CASCADE
 from django.db.models.fields import AutoField, IntegerField
 from django.contrib.auth.models import User as authUser
@@ -70,3 +71,19 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.made_by.first_name
+
+class UpvoteA(models.Model):
+    answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
+    by = models.ForeignKey(User, on_delete=models.CASCADE)
+
+class DownvoteA(models.Model):
+    answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
+    by = models.ForeignKey(User, on_delete=models.CASCADE)
+
+class UpvoteQ(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    by = models.ForeignKey(User, on_delete=models.CASCADE)
+    
+class DownvoteQ(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    by = models.ForeignKey(User, on_delete=models.CASCADE)
