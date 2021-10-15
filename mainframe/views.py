@@ -97,6 +97,7 @@ class Profile(TemplateView):
 
 class Post(TemplateView):
     def get(self, request, pk):
+        
         answerForm = AnswerForm()
         commentForm = CommentForm()
         question = Question.objects.get(id=pk)
@@ -140,7 +141,6 @@ class AskQuestion(TemplateView):
             obj = form.save(commit=False)
             usr = Home.getUser(self, request)
             obj.made_by = User.objects.get(id = usr.id)
-            obj.votes = obj.upvotes - obj.downvotes
             form.save()
             return redirect('/')
 
@@ -161,6 +161,99 @@ class Tags(TemplateView):
 class AllUsers(TemplateView):
     def get(self, request):
         users = User.objects.all()
-        print(users)
         context = { 'myuser' : Home.getUser(self, request), 'users' : users}
         return render(request, 'users.html', context)
+
+class UpvoteQClass(TemplateView):
+    def get(self, request, qpk):
+        return
+    def post(self, request, qpk):
+        q = Question.objects.get(id = qpk)
+        u = Home.getUser(self, request)
+        upvoteQ, createdUV = UpvoteQ.objects.get_or_create(question = q, by = u)
+        downvoteQ = DownvoteQ.objects.filter(question = q, by = u).exists()
+        if createdUV:
+            if downvoteQ:
+                DownvoteQ.objects.get(question = q, by = u).delete()
+                request.session['down'] = False
+            request.session['up'] = True
+            upvoteQ.save()
+        else:
+            request.session['up'] = False
+            upvoteQ.delete()
+
+        return redirect('/question/'+str(qpk))
+
+class DownvoteQClass(TemplateView):
+    def get(self, request, qpk):
+        return
+    def post(self, request, qpk):
+        q = Question.objects.get(id = qpk)
+        u = Home.getUser(self, request)
+        downvoteQ, createdDV = DownvoteQ.objects.get_or_create(question = q, by = u)
+        upvoteQ = UpvoteQ.objects.filter(question = q, by = u).exists()
+
+        if createdDV:
+            if upvoteQ:
+                UpvoteQ.objects.get(question = q, by = u).delete()
+                request.session['up'] = False
+            request.session['down'] = True
+            downvoteQ.save()
+        else:
+            downvoteQ.delete()
+            request.session['down'] = False
+
+        return redirect('/question/'+str(qpk))
+
+
+class BookmarkClass(TemplateView):
+    def get(self, request, qpk):
+        return
+    def post(self, request, qpk):
+        q = Question.objects.get(id = qpk)
+        u = Home.getUser(self, request)
+        bookmark, created = Bookmark.objects.get_or_create(question = q, user = u)
+        if created:
+            bookmark.save()
+            request.session['bookmark'] = True
+        else:
+            bookmark.delete()
+            request.session['bookmark'] = False
+
+        return redirect('/question/'+str(qpk))
+
+class UpvoteAClass(TemplateView):
+    def get(self, request, qpk):
+        return
+    def post(self, request, qpk, apk):
+        print("working")
+        a = Answer.objects.get(id = apk)
+        u = Home.getUser(self, request)
+        upvoteA, createdUV = UpvoteA.objects.get_or_create(answer = a, by = u)
+        downvoteA = DownvoteA.objects.filter(answer = a, by = u).exists()
+        if createdUV:
+            if downvoteA:
+                DownvoteA.objects.get(answer = a, by = u).delete()
+            upvoteA.save()
+        else:
+            upvoteA.delete()
+
+        return redirect('/question/'+str(qpk))
+
+class DownvoteAClass(TemplateView):
+    def get(self, request, qpk, apk):
+        return
+    def post(self, request, qpk, apk):
+        a = Answer.objects.get(id = apk)
+        u = Home.getUser(self, request)
+        downvoteA, createdDV = DownvoteA.objects.get_or_create(answer = a, by = u)
+        upvoteA = UpvoteA.objects.filter(answer = a, by = u).exists()
+
+        if createdDV:
+            if upvoteA:
+                UpvoteA.objects.get(answer = a, by = u).delete()
+            downvoteA.save()
+        else:
+            downvoteA.delete()
+
+        return redirect('/question/'+str(qpk))

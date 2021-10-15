@@ -41,27 +41,43 @@ class User(models.Model):
 class Question(models.Model):
     title = models.CharField(max_length=200)
     description = models.CharField(max_length=1000)
+ 
     upvotes = models.IntegerField(default=0)
     downvotes = models.IntegerField(default=0)
-    votes = models.IntegerField(default=0)
-    created_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now=True, editable=False)
     made_by = models.ForeignKey(User, on_delete=models.CASCADE)
     tags = models.ManyToManyField(Tag)
     answerCount = models.IntegerField(default=0)
     def __str__(self):
         return self.title
+    @property
+    def votes(self):
+        return self.upvotes - self.downvotes
+    @property
+    def upvotes(self):
+        return UpvoteQ.objects.filter(question = self.id).count()
+    @property
+    def downvotes(self):
+        return DownvoteQ.objects.filter(question = self.id).count()
 
 class Answer(models.Model):
     description = models.CharField(max_length=1000)
-    upvotes = models.IntegerField(default=0)
-    downvotes = models.IntegerField(default=0)
-    votes = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now=True)
     made_by = models.ForeignKey(User, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.made_by.first_name
+
+    @property
+    def votes(self):
+        return self.upvotes - self.downvotes
+    @property
+    def upvotes(self):
+        return UpvoteA.objects.filter(answer = self.id).count()
+    @property
+    def downvotes(self):
+        return DownvoteA.objects.filter(answer = self.id).count()
 
 class Comment(models.Model):
     description = models.CharField(max_length=300)
@@ -87,3 +103,10 @@ class UpvoteQ(models.Model):
 class DownvoteQ(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     by = models.ForeignKey(User, on_delete=models.CASCADE)
+
+class Bookmark(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user.first_name + '~' + self.question.title[:30]

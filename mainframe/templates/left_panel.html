@@ -1,8 +1,8 @@
 <!-- left panel -->
 <div class="col-3 py-5 border-end px-0 mt-0 position-fixed" style="height: 100vh;">
     <div class="col-5 lh-lg float-end">
-        <div class="my-2 ps-2 panel-item active"><a href="{% url 'mainframe:home' %}">Home</a></div>
-        <div class="my-2 ps-2 panel-item"><a href="{% url 'mainframe:alltags' %}">Tags</a></div>
-        <div class="my-2 ps-2 panel-item"><a href="{% url 'mainframe:allusers' %}">Users</a></div>
+        <div class="my-2 ps-2 panel-item {% if request.path_info == '/' %} active {% endif %}"><a href="{% url 'mainframe:home' %}">Home</a></div>
+        <div class="my-2 ps-2 panel-item {% if 'tag' in request.path_info %} active {% endif %}"><a href="{% url 'mainframe:alltags' %}">Tags</a></div>
+        <div class="my-2 ps-2 panel-item {% if 'users' in request.path_info or 'profile' in request.path_info %} active {% endif %}"><a href="{% url 'mainframe:allusers' %}">Users</a></div>
     </div>
 </div>

@@ -11,7 +11,7 @@
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        {% if 'register' not in request.get_full_path and 'login' not in request.get_full_path and 'profile' not in request.get_full_path%}
+        {% if request.path_info == '/' %}
         <div class="col-6">
             <form class="d-flex justify-content-center m-auto" method="GET" id="searchBar">
                 {% for f in myFilter.form %}

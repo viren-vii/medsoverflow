@@ -33,4 +33,12 @@ urlpatterns = [
     path('tag/<int:pk>', views.TagFilter.as_view(), name='tagFilter'),
     path('alltags', views.Tags.as_view(), name='alltags'),
     path('allusers', views.AllUsers.as_view(), name='allusers'),
+
+    path('upvote/<int:qpk>', login_required(login_url='/login')(views.UpvoteQClass.as_view()), name='upvoteQ'),
+    path('downvote/<int:qpk>', login_required(login_url='/login')(views.DownvoteQClass.as_view()), name='downvoteQ'),
+
+    path('bookmark/<int:qpk>', login_required(login_url='/login')(views.BookmarkClass.as_view()), name='bookmark'),
+
+    path('upvoteA/<int:qpk>/<int:apk>', login_required(login_url='/login')(views.UpvoteAClass.as_view()), name='upvoteA'),
+    path('downvoteA/<int:qpk>/<int:apk>', login_required(login_url='/login')(views.DownvoteAClass.as_view()), name='downvoteA'),
 ]
