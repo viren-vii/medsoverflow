@@ -1,10 +1,10 @@
- <!-- navbar -->
+{% load static %}
+<!-- navbar -->
  <nav class="navbar navbar-expand-lg fixed-top navbar-light p-0 bg-light shadow-sm">
     <div class="container-fluid p-0">
         <div class="col-3">
             <a class="navbar-brand block float-end py-2 px-2 me-0" href="{% url 'mainframe:home' %}">
-                <img src="https://www.w3schools.com/images/lamp.jpg" alt="" width="32" class="d-inline-block align-text-top">
-                meds <b>overflow</b>
+                <img src="{% static '/images/medsoverflow.png' %}" alt="" width="180" class="d-inline-block align-text-top">
             </a>
         </div>
 

@@ -40,5 +40,4 @@ urlpatterns = [
     path('bookmark/<int:qpk>', login_required(login_url='/login')(views.BookmarkClass.as_view()), name='bookmark'),
 
     path('upvoteA/<int:qpk>/<int:apk>', login_required(login_url='/login')(views.UpvoteAClass.as_view()), name='upvoteA'),
-    path('downvoteA/<int:qpk>/<int:apk>', login_required(login_url='/login')(views.DownvoteAClass.as_view()), name='downvoteA'),
 ]

@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.db.models.deletion import CASCADE
 
 # Register your models here.
-from mainframe.models import User, Tag, Role, Question, Answer, Comment, UpvoteA, DownvoteA, UpvoteQ, DownvoteQ, Bookmark
+from mainframe.models import User, Tag, Role, Question, Answer, Comment, CommentAnswer, UpvoteA, UpvoteQ, DownvoteQ, Bookmark
 
 
 class UserAdmin(admin.ModelAdmin):
@@ -17,10 +17,11 @@ class AnswerAdmin(admin.ModelAdmin):
     readonly_fields = ('id',)
 class CommentAdmin(admin.ModelAdmin):
     readonly_fields = ('id',)
+class CommentAnswerAdmin(admin.ModelAdmin):
+    readonly_fields = ('id',)
+
 
 class UpvoteAAdmin(admin.ModelAdmin):
-    readonly_fields = ('id',)
-class DownvoteAAdmin(admin.ModelAdmin):
     readonly_fields = ('id',)
 class UpvoteQAdmin(admin.ModelAdmin):
     readonly_fields = ('id',)
@@ -36,10 +37,10 @@ admin.site.register(Role, RoleAdmin)
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(Answer, AnswerAdmin)
 admin.site.register(Comment, CommentAdmin)
+admin.site.register(CommentAnswer, CommentAnswerAdmin)
 
 admin.site.register(UpvoteQ, UpvoteQAdmin)
 admin.site.register(DownvoteQ, DownvoteQAdmin)
 admin.site.register(UpvoteA, UpvoteAAdmin)
-admin.site.register(DownvoteA, DownvoteAAdmin)
 
 admin.site.register(Bookmark, BookmarkAdmin)

@@ -1,5 +1,12 @@
 {% extends 'main.html' %}
 {% block post %}
+<br>
+<div class="alert alert-success" role="alert" style="display: none;">
+    This question has been bookmarked.
+</div>
+<div class="alert alert-danger" role="alert" style="display: none;">
+    The bookmark of this question has been removed.
+</div>
  <!-- middle main panel -->
 <!-- question -->
 <div class="mt-5">
@@ -16,9 +23,9 @@
                 {% csrf_token %}
                 <button type="submit" name="downvoteQ" class="iconButton"><i class="material-icons {% if request.session.down %} voted {% endif %} align-middle" style="font-size: 64px;">arrow_drop_down</i></button><br>
             </form>
-            <form action="{% url 'mainframe:bookmark' question.id %}" method="POST">
+            <form id="bookmark" action="{% url 'mainframe:bookmark' question.id %}" method="POST">
                 {% csrf_token %}
-                <button type="submit" name="bookmark" class="iconButton"><i class="material-icons {% if request.session.bookmark %} voted {% endif %} align-middle" style="font-size: 32px;">bookmark</i></button><br>
+                <button type="submit" name="bookmark" class="iconButton"><i id="bookmarkIcon" class="material-icons {% if qMarked %} voted {% endif %} align-middle" style="font-size: 32px;">bookmark</i></button><br>
             </form>
         </div>
         <div class="col-10">
@@ -71,23 +78,20 @@
         <pre>Answered {{ answer.created_at }}</pre>
         <div class="row">
             <div class="col-1 text-center">
-                <form id="answerUpVote" action="{% url 'mainframe:upvoteA' question.id answer.id %}" method="POST">
+                <form class="answerUpVote" action="{% url 'mainframe:upvoteA' question.id answer.id %}" method="POST">
                     {% csrf_token %}
-                    <button type="submit" name="upvoteA" class="iconButton"><i class="material-icons  align-middle" style="font-size: 64px;">arrow_drop_up</i></button><br>
+                    <button type="submit" name="upvoteA" class="iconButton"><i class="material-icons {{answer.id}} {% if answer.voted %} voted {% endif %} align-middle" style="font-size: 64px;">arrow_drop_up</i></button><br>
                 </form>
-                <b class="align-middle text-secondary">{{ answer.votes }}</b>
-                <form action="{% url 'mainframe:downvoteA' question.id answer.id %}" method="POST">
-                    {% csrf_token %}
-                    <button type="submit" name="downvoteA" class="iconButton"><i class="material-icons  align-middle" style="font-size: 64px;">arrow_drop_down</i></button><br>
-                </form>
+                <b class="{{answer.id}} align-middle text-secondary">{{ answer.votes }}</b>
             </div>
             <div class="col-10">
                 <p>
                     {{ answer.description }}
                 </p>
             </div>
-            <div class="row">
+            <div class="row mt-5">
                 <div class="col-7">
+                    <a href="">Add Comment</a>
                 </div>
                 <div class="col-5 text-end blockquote-footer">
                     <a href="{% url 'mainframe:profile' answer.made_by.id %}">{{ answer.made_by }}</a>
@@ -95,7 +99,6 @@
                     <b>{{ answer.made_by.rating }}</b>
                 </div>
             </div>
-
         </div>
         <hr>
     {% endfor %}
@@ -114,4 +117,8 @@
         </form>
     </div>
 </div>
+
+<script>
+ </script> 
+
 {% endblock post %}

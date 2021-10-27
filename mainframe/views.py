@@ -103,9 +103,25 @@ class Post(TemplateView):
         question = Question.objects.get(id=pk)
         comments = Comment.objects.filter(question = question.id)
         answers = Answer.objects.filter(question = question.id).order_by('-created_at')
+        qMarked = Bookmark.objects.filter(user = (Home.getUser(self, request)).id, question = question.id).exists()
 
-        context = {'question': question, 'comments': comments, 'answers' : answers, 'answerForm' : answerForm, 'commentForm' : commentForm, 'myuser' : Home.getUser(self, request)}
-
+        answerUpvotes = UpvoteA.objects.filter(by = (Home.getUser(self, request)).id)
+        print(answerUpvotes)
+        answerUpvotesUserId = [ x.answer for x in answerUpvotes]
+        for a in answers:
+            if a in answerUpvotesUserId:
+                setattr(a, 'voted', 'True')
+            answerComments = CommentAnswer.objects.filter(answer = a.id)
+            setattr(a, 'comments',answerComments)
+        context = {
+            'question': question,
+            'comments': comments,
+            'answers' : answers,
+            'answerForm' : answerForm,
+            'commentForm' : commentForm,
+            'myuser' : Home.getUser(self, request),
+            'qMarked' : qMarked,
+        }
         return render(request, 'post.html', context)
 
     @method_decorator(login_required(login_url='/login'))
@@ -215,11 +231,8 @@ class BookmarkClass(TemplateView):
         bookmark, created = Bookmark.objects.get_or_create(question = q, user = u)
         if created:
             bookmark.save()
-            request.session['bookmark'] = True
         else:
             bookmark.delete()
-            request.session['bookmark'] = False
-
         return redirect('/question/'+str(qpk))
 
 class UpvoteAClass(TemplateView):
@@ -230,30 +243,6 @@ class UpvoteAClass(TemplateView):
         a = Answer.objects.get(id = apk)
         u = Home.getUser(self, request)
         upvoteA, createdUV = UpvoteA.objects.get_or_create(answer = a, by = u)
-        downvoteA = DownvoteA.objects.filter(answer = a, by = u).exists()
-        if createdUV:
-            if downvoteA:
-                DownvoteA.objects.get(answer = a, by = u).delete()
-            upvoteA.save()
-        else:
+        if not createdUV:
             upvoteA.delete()
-
-        return redirect('/question/'+str(qpk))
-
-class DownvoteAClass(TemplateView):
-    def get(self, request, qpk, apk):
-        return
-    def post(self, request, qpk, apk):
-        a = Answer.objects.get(id = apk)
-        u = Home.getUser(self, request)
-        downvoteA, createdDV = DownvoteA.objects.get_or_create(answer = a, by = u)
-        upvoteA = UpvoteA.objects.filter(answer = a, by = u).exists()
-
-        if createdDV:
-            if upvoteA:
-                UpvoteA.objects.get(answer = a, by = u).delete()
-            downvoteA.save()
-        else:
-            downvoteA.delete()
-
         return redirect('/question/'+str(qpk))

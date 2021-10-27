@@ -71,13 +71,10 @@ class Answer(models.Model):
 
     @property
     def votes(self):
-        return self.upvotes - self.downvotes
+        return self.upvotes
     @property
     def upvotes(self):
         return UpvoteA.objects.filter(answer = self.id).count()
-    @property
-    def downvotes(self):
-        return DownvoteA.objects.filter(answer = self.id).count()
 
 class Comment(models.Model):
     description = models.CharField(max_length=300)
@@ -88,13 +85,25 @@ class Comment(models.Model):
     def __str__(self):
         return self.made_by.first_name
 
+class CommentAnswer(models.Model):
+    description = models.CharField(max_length=300)
+    created_at = models.DateTimeField(auto_now=True)
+    made_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.made_by.first_name
+
 class UpvoteA(models.Model):
     answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
-    by = models.ForeignKey(User, on_delete=models.CASCADE)
+    by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
-class DownvoteA(models.Model):
-    answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
-    by = models.ForeignKey(User, on_delete=models.CASCADE)
+    # def __str__(self):
+    #     return self.by.username + ' on ' + self.answer.question.title
+
+    @property
+    def question(self):
+        return self.answer.question
 
 class UpvoteQ(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
