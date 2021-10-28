@@ -30,3 +30,16 @@ $('#bookmark').submit(function(e){
     });
     e.preventDefault();
 })
+
+function showAnswerComment(e){
+
+    console.log($('#a'+$(e).parent().attr('id')));
+    $(e).parent().css('display', 'none');
+    $('#a'+$(e).parent().attr('id')).css('display','');
+
+}
+
+$(window).ready(function() {
+    console.log( "ready!" );
+    console.log(accepted)
+});

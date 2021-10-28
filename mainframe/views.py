@@ -1,7 +1,7 @@
 from django.contrib import auth
 from django.db.models.query import QuerySet
 from django.http.response import HttpResponse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, request
 from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -108,11 +108,18 @@ class Post(TemplateView):
         answerUpvotes = UpvoteA.objects.filter(by = (Home.getUser(self, request)).id)
         print(answerUpvotes)
         answerUpvotesUserId = [ x.answer for x in answerUpvotes]
+
+        isAccepted = 'no'
+
         for a in answers:
             if a in answerUpvotesUserId:
                 setattr(a, 'voted', 'True')
             answerComments = CommentAnswer.objects.filter(answer = a.id)
             setattr(a, 'comments',answerComments)
+            answerCommentForm = AnswerCommentForm()
+            setattr(a, 'answerCommentForm',answerCommentForm)
+            if a.accepted:
+                isAccepted = a.id
         context = {
             'question': question,
             'comments': comments,
@@ -121,6 +128,7 @@ class Post(TemplateView):
             'commentForm' : commentForm,
             'myuser' : Home.getUser(self, request),
             'qMarked' : qMarked,
+            'accepted' : isAccepted,
         }
         return render(request, 'post.html', context)
 
@@ -143,6 +151,33 @@ class Post(TemplateView):
             form.save()
 
         return HttpResponseRedirect(request.path_info)
+
+class AnswerComment(TemplateView):
+    def get(self, request, apk, qpk):
+        return
+    def post(self, request, apk, qpk):
+        form = AnswerCommentForm(request.POST)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.made_by = User.objects.get(id=Home.getUser(self, request).id)
+            obj.answer = Answer.objects.get(id=apk)
+            form.save()
+        print(request.path_info)
+        return HttpResponseRedirect('/question/'+str(qpk))
+
+
+class AcceptAnswer(TemplateView):
+    def get(self, request, apk, qpk):
+        return
+    def post(self, request, apk, qpk):
+        answer = Answer.objects.get(id=apk)
+        if answer.accepted:
+            answer.accepted = False
+        else:
+            answer.accepted = True
+
+        return HttpResponseRedirect('/question/'+str(qpk))
+    
 
 class AskQuestion(TemplateView):
     form = QuestionForm()

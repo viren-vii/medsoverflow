@@ -16,16 +16,16 @@
         <div class="col-1 text-center">
             <form action="{% url 'mainframe:upvoteQ' question.id %}" method="POST">
                 {% csrf_token %}
-                <button type="submit" name="upvoteQ" class="iconButton"><i class="material-icons {% if request.session.up %} voted {% endif %} align-middle" style="font-size: 64px;">arrow_drop_up</i></button><br>
+                <button type="submit" name="upvoteQ" class="iconButton"><i class="material-icons upvoteIcon {% if request.session.up %} voted {% endif %} align-middle" style="font-size: 64px;">arrow_drop_up</i></button><br>
             </form>
             <b class="align-middle text-secondary">{{ question.votes }}</b>
             <form action="{% url 'mainframe:downvoteQ' question.id %}" method="POST">
                 {% csrf_token %}
-                <button type="submit" name="downvoteQ" class="iconButton"><i class="material-icons {% if request.session.down %} voted {% endif %} align-middle" style="font-size: 64px;">arrow_drop_down</i></button><br>
+                <button type="submit" name="downvoteQ" class="iconButton"><i class="material-icons downvoteIcon {% if request.session.down %} voted {% endif %} align-middle" style="font-size: 64px;">arrow_drop_down</i></button><br>
             </form>
             <form id="bookmark" action="{% url 'mainframe:bookmark' question.id %}" method="POST">
                 {% csrf_token %}
-                <button type="submit" name="bookmark" class="iconButton"><i id="bookmarkIcon" class="material-icons {% if qMarked %} voted {% endif %} align-middle" style="font-size: 32px;">bookmark</i></button><br>
+                <button type="submit" name="bookmark" class="iconButton"><i id="bookmarkIcon" class="material-icons bookmarkIcon {% if qMarked %} voted {% endif %} align-middle" style="font-size: 32px;">bookmark</i></button><br>
             </form>
         </div>
         <div class="col-10">
@@ -69,7 +69,7 @@
         </div>
     </div>
 </div>
-<hr>
+<hr> 
 <!-- answers -->    
 <div class="mt-5">
     <h4>Answers {{ answers.count }}</h4>
@@ -80,9 +80,13 @@
             <div class="col-1 text-center">
                 <form class="answerUpVote" action="{% url 'mainframe:upvoteA' question.id answer.id %}" method="POST">
                     {% csrf_token %}
-                    <button type="submit" name="upvoteA" class="iconButton"><i class="material-icons {{answer.id}} {% if answer.voted %} voted {% endif %} align-middle" style="font-size: 64px;">arrow_drop_up</i></button><br>
+                    <button type="submit" name="upvoteA" class="iconButton"><i class="material-icons upvoteIcon {{answer.id}} {% if answer.voted %} voted {% endif %} align-middle" style="font-size: 64px;">arrow_drop_up</i></button><br>
                 </form>
                 <b class="{{answer.id}} align-middle text-secondary">{{ answer.votes }}</b>
+                <form action="{% url 'mainframe:acceptAnswer' answer.id question.id %}" id="acceptAnswerForm{{answer.id}}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" name="acceptAnswer" class="iconButton"><i class="material-icons mt-3 acceptAnswerIcon align-middle" style="font-size: 32px;">verified</i></button>
+                </form>
             </div>
             <div class="col-10">
                 <p>
@@ -90,15 +94,40 @@
                 </p>
             </div>
             <div class="row mt-5">
-                <div class="col-7">
-                    <a href="">Add Comment</a>
+                <div class="col-7" id="comment{{answer.id}}">
+                    <a onclick="showAnswerComment(this);" href="javascript:;">Add Comment</a>
                 </div>
+                <div class="col-7 align-center" id="acomment{{answer.id}}" style="display: none;">
+                    <form action="{% url 'mainframe:acomment' answer.id question.id %}" method="POST">
+                        {% csrf_token %}
+                        {% for f in answer.answerCommentForm %}
+                            {{f}}
+                        {% endfor %}
+                        <input type="submit" class="btn btn-primary" name="Comment" value="Comment">
+                    </form>
+                </div>
+
                 <div class="col-5 text-end blockquote-footer">
                     <a href="{% url 'mainframe:profile' answer.made_by.id %}">{{ answer.made_by }}</a>
                     <b class="text-secondary">{{ answer.made_by.name }}</b>
                     <b>{{ answer.made_by.rating }}</b>
                 </div>
             </div>
+            {% if answer.comments %}
+                <h5>Comments {{answer.comments.count}}</h5>
+            {% endif %}
+            {% for c in answer.comments %}
+                <div class="col-1"></div>
+                <div class="col-11">
+                    <hr style="border-top: 1px solid rgb(122, 214, 141);">
+                    {{ c.description }}
+                    <div class="text-end blockquote-footer">
+                        <span class="text-secondary font-weight-light">{{ c.created_at }}</span>
+                        <a href="{% url 'mainframe:profile' c.made_by.id %}">{{ c.made_by }}</a>
+                        <b>{{ c.made_by.rating }}</b>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
         <hr>
     {% endfor %}
@@ -119,6 +148,7 @@
 </div>
 
 <script>
+    var accepted = '{{accepted}}'
  </script> 
 
 {% endblock post %}

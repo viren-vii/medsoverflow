@@ -65,7 +65,7 @@ class Answer(models.Model):
     created_at = models.DateTimeField(auto_now=True)
     made_by = models.ForeignKey(User, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
-
+    accepted = models.BooleanField(default=False)
     def __str__(self):
         return self.made_by.first_name
 
@@ -92,7 +92,7 @@ class CommentAnswer(models.Model):
     answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.made_by.first_name
+        return self.made_by
 
 class UpvoteA(models.Model):
     answer = models.ForeignKey(Answer, on_delete=models.CASCADE)

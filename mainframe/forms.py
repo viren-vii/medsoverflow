@@ -30,6 +30,14 @@ class CommentForm(ModelForm):
           'description': forms.Textarea(attrs={'rows':2, 'cols':90}),
         }
 
+class AnswerCommentForm(ModelForm):
+    class Meta:
+        model = CommentAnswer
+        fields = ['description']
+        widgets = {
+          'description': forms.Textarea(attrs={'rows':1, 'cols':40}),
+        }
+
 class CreateUserForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

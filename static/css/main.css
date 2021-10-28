@@ -83,3 +83,9 @@ a {
     padding:0;
     outline: none;
 }
+.upvoteIcon:hover,
+.downvoteIcon:hover,
+.bookmarkIcon:hover,
+.acceptAnswerIcon:hover{
+    color: rgb(122, 214, 141) !important;
+}
