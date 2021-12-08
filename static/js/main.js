@@ -41,5 +41,15 @@ function showAnswerComment(e){
 
 $(window).ready(function() {
     console.log( "ready!" );
-    console.log(accepted)
+    if(window.location.href.includes('question')){
+        if(accepted !== 'no'){
+            $('#acceptAnswerForm'+accepted).find('i').addClass('voted');
+        }
+        console.log(canAccept)
+        if(canAccept==='False'){
+            $('.acceptAnswerForm').each(function(i, obj){
+                $(obj).css('display', 'none');
+            });
+        }
+    }
 });

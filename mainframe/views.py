@@ -12,6 +12,7 @@ from .models import *
 from django.contrib.auth.models import User as authUser
 from django.utils.decorators import method_decorator
 from .filters import QuestionFilter
+from django.http import JsonResponse
 # Create your views here.
 
 class Register(TemplateView):
@@ -20,7 +21,7 @@ class Register(TemplateView):
         
         context = {'form' : form, 'myuser' : Home.getUser(self, request)}
         return render(request, 'register.html', context)
-    
+
     def post(self, request):
         form = CreateUserForm(request.POST)
         if form.is_valid():
@@ -69,6 +70,10 @@ class Home(TemplateView):
             return myuser
         return 
 
+    def getBookmarks(self, request):
+        bookmarks = Bookmark.objects.filter(user = self.getUser(request))
+        return bookmarks
+
     def get(self, request):
 
         isLoggedIn = False
@@ -79,8 +84,27 @@ class Home(TemplateView):
         myFilter = QuestionFilter(request.GET, queryset=questions)
         questions = myFilter.qs
 
+        bookmarks = self.getBookmarks(request)
+        bookmarksPass = []
+        for b in bookmarks:
+            bm = {}
+            bm['id'] = b.question.id
+            bm['title'] = b.question.title
+            bm['description'] = b.question.description
+            bookmarksPass.append(bm)
+
+        request.session['bookmarks'] = bookmarksPass
+        print(request.session['bookmarks'])
+
+        for q in questions:
+            answers = Answer.objects.filter(question=q.id)
+            for a in answers:
+                if a.accepted:
+                    setattr(q, 'answered', True)
+                    break
+
         myuser = self.getUser(request)
-        context = {'questions': questions, 'isLoggedIn' : isLoggedIn, 'myuser' : myuser, 'myFilter' : myFilter}
+        context = {'questions': questions, 'isLoggedIn' : isLoggedIn, 'myuser' : myuser, 'myFilter' : myFilter, 'bookmarks': bookmarks}
 
         return render(request, 'main_feed.html', context)
 
@@ -104,9 +128,8 @@ class Post(TemplateView):
         comments = Comment.objects.filter(question = question.id)
         answers = Answer.objects.filter(question = question.id).order_by('-created_at')
         qMarked = Bookmark.objects.filter(user = (Home.getUser(self, request)).id, question = question.id).exists()
-
+        canAccept = question.made_by.id == (Home.getUser(self, request)).id
         answerUpvotes = UpvoteA.objects.filter(by = (Home.getUser(self, request)).id)
-        print(answerUpvotes)
         answerUpvotesUserId = [ x.answer for x in answerUpvotes]
 
         isAccepted = 'no'
@@ -129,16 +152,15 @@ class Post(TemplateView):
             'myuser' : Home.getUser(self, request),
             'qMarked' : qMarked,
             'accepted' : isAccepted,
+            'canAccept' : canAccept,
         }
         return render(request, 'post.html', context)
 
     @method_decorator(login_required(login_url='/login'))
     def post(self, request, pk):
         if 'Answer' in request.POST:
-            print("In answer")
             form = AnswerForm(request.POST)
         elif 'Comment' in request.POST:
-            print("In Comment")
             form = CommentForm(request.POST)
         if form.is_valid():
             obj = form.save(commit=False)
@@ -162,7 +184,6 @@ class AnswerComment(TemplateView):
             obj.made_by = User.objects.get(id=Home.getUser(self, request).id)
             obj.answer = Answer.objects.get(id=apk)
             form.save()
-        print(request.path_info)
         return HttpResponseRedirect('/question/'+str(qpk))
 
 
@@ -170,11 +191,23 @@ class AcceptAnswer(TemplateView):
     def get(self, request, apk, qpk):
         return
     def post(self, request, apk, qpk):
+        answersOfQuestion = Answer.objects.filter(question=qpk)
+        if answersOfQuestion:
+            for a in answersOfQuestion:
+                if a.accepted:
+                    if a.id == apk:
+                        a.accepted = False
+                        a.save()
+                        return HttpResponseRedirect('/question/'+str(qpk))
+                    a.accepted = False
+                    a.save()
+
         answer = Answer.objects.get(id=apk)
         if answer.accepted:
             answer.accepted = False
         else:
             answer.accepted = True
+        answer.save()
 
         return HttpResponseRedirect('/question/'+str(qpk))
     
@@ -274,7 +307,6 @@ class UpvoteAClass(TemplateView):
     def get(self, request, qpk):
         return
     def post(self, request, qpk, apk):
-        print("working")
         a = Answer.objects.get(id = apk)
         u = Home.getUser(self, request)
         upvoteA, createdUV = UpvoteA.objects.get_or_create(answer = a, by = u)

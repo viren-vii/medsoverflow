@@ -8,7 +8,7 @@
     <div class="card my-2 border-bottom shadow-sm">
         <div class="card-body row">
             <p class="col-1 mx-1 border rounded text-center p-2 bg-light text-secondary">{{ q.votes }}<br><span class="small">votes</span></p>
-            <p class="col-1 mx-1 border rounded text-center p-2 bg-light text-secondary">{{ q.upvotes }}<br><span class="small">answers</span></p>
+            <p class="{% if q.answered %} answeredFill {% else %} text-secondary bg-light border {% endif %} col-1 mx-1 rounded text-center p-2">{{ q.answerCount }}<br><span class="small">answers</span></p>
             <a href="{% url 'mainframe:question' q.id %}" class="col-9 p-2">{{ q.title }}</a>
             <div class="col-7">
                 {% for t in q.tags.all %}

@@ -89,3 +89,13 @@ a {
 .acceptAnswerIcon:hover{
     color: rgb(122, 214, 141) !important;
 }
+.answeredFill{
+    font-weight: 500;
+    color: white;
+    background-color:  rgb(122, 214, 141) !important;
+    border: 1px solid rgb(108, 189, 124);
+    box-shadow: 1px 1px 3px rgb(108, 189, 124);;
+}
+.logoutIcon{
+    text-shadow: 1px 1px 5px red;
+}

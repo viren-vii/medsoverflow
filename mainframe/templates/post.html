@@ -83,7 +83,7 @@
                     <button type="submit" name="upvoteA" class="iconButton"><i class="material-icons upvoteIcon {{answer.id}} {% if answer.voted %} voted {% endif %} align-middle" style="font-size: 64px;">arrow_drop_up</i></button><br>
                 </form>
                 <b class="{{answer.id}} align-middle text-secondary">{{ answer.votes }}</b>
-                <form action="{% url 'mainframe:acceptAnswer' answer.id question.id %}" id="acceptAnswerForm{{answer.id}}" method="POST">
+                <form action="{% url 'mainframe:acceptAnswer' answer.id question.id %}" class="acceptAnswerForm" id="acceptAnswerForm{{answer.id}}" method="POST">
                     {% csrf_token %}
                     <button type="submit" name="acceptAnswer" class="iconButton"><i class="material-icons mt-3 acceptAnswerIcon align-middle" style="font-size: 32px;">verified</i></button>
                 </form>
@@ -148,7 +148,8 @@
 </div>
 
 <script>
-    var accepted = '{{accepted}}'
+    var accepted = '{{accepted}}';
+    var canAccept = '{{canAccept}}';
  </script> 
 
 {% endblock post %}

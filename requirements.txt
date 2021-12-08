@@ -1,0 +1,4 @@
+Django==3.2.7
+django_environ==0.7.0
+django_filter==21.1
+environ==1.0
