@@ -68,7 +68,7 @@ class Home(TemplateView):
             usr = request.user
             myuser = User.objects.get(username = usr.username)
             return myuser
-        return 
+        return None
 
     def getBookmarks(self, request):
         bookmarks = Bookmark.objects.filter(user = self.getUser(request))
@@ -84,18 +84,24 @@ class Home(TemplateView):
         myFilter = QuestionFilter(request.GET, queryset=questions)
         questions = myFilter.qs
 
-        bookmarks = self.getBookmarks(request)
-        bookmarksPass = []
-        if bookmarks:
-            for b in bookmarks:
-                bm = {}
-                bm['id'] = b.question.id
-                bm['title'] = b.question.title
-                bm['description'] = b.question.description
-                bookmarksPass.append(bm)
+        if isLoggedIn:
+            bookmarks = self.getBookmarks(request)
+            bookmarksPass = []
+            if bookmarks:
+                for b in bookmarks:
+                    bm = {}
+                    bm['id'] = b.question.id
+                    bm['title'] = b.question.title
+                    bm['description'] = b.question.description
+                    bookmarksPass.append(bm)
 
-        request.session['bookmarks'] = bookmarksPass
-        print(request.session['bookmarks'])
+            request.session['bookmarks'] = bookmarksPass
+            print(request.session['bookmarks'])
+
+            myuser = self.getUser(request)
+        else:
+            bookmarks = None
+            myuser = None
 
         for q in questions:
             answers = Answer.objects.filter(question=q.id)
@@ -103,8 +109,7 @@ class Home(TemplateView):
                 if a.accepted:
                     setattr(q, 'answered', True)
                     break
-
-        myuser = self.getUser(request)
+        
         context = {'questions': questions, 'isLoggedIn' : isLoggedIn, 'myuser' : myuser, 'myFilter' : myFilter, 'bookmarks': bookmarks}
 
         return render(request, 'main_feed.html', context)
