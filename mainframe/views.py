@@ -86,12 +86,13 @@ class Home(TemplateView):
 
         bookmarks = self.getBookmarks(request)
         bookmarksPass = []
-        for b in bookmarks:
-            bm = {}
-            bm['id'] = b.question.id
-            bm['title'] = b.question.title
-            bm['description'] = b.question.description
-            bookmarksPass.append(bm)
+        if bookmarks:
+            for b in bookmarks:
+                bm = {}
+                bm['id'] = b.question.id
+                bm['title'] = b.question.title
+                bm['description'] = b.question.description
+                bookmarksPass.append(bm)
 
         request.session['bookmarks'] = bookmarksPass
         print(request.session['bookmarks'])
